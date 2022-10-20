@@ -119,16 +119,8 @@ extern "C" void load() {
 
     PlaylistSynchronizer::SyncPlaylist();
 
-    ReplayRecorder::StartRecording([](Replay const& replay, MapStatus status, bool isOst) {
-        if (status == MapStatus::cleared) {
+    ReplayRecorder::StartRecording([](Replay const& replay, bool isOst) {
             ReplayManager::ProcessReplay(replay, isOst, replayPostCallback);
-        } else {
-            ReplayManager::ProcessReplay(replay, isOst, [](ReplayUploadStatus finished, string description, float progress, int code) {
-                QuestUI::MainThreadScheduler::Schedule([description, progress, finished, code] {
-                    LeaderboardUI::updateStatus(finished, description, progress, code > 450);
-                });
-            });
-        }
     });
 
     getLogger().info("Installing main hooks...");

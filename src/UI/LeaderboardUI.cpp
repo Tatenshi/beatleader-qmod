@@ -682,8 +682,8 @@ namespace LeaderboardUI {
 
     void updateStatus(ReplayUploadStatus status, string description, float progress, bool showRestart) {
         lastVotingStatusUrl = "";
+        if(uploadStatus) uploadStatus->SetText(description);
         if (visible) {
-            uploadStatus->SetText(description);
             switch (status)
             {
                 case ReplayUploadStatus::finished:

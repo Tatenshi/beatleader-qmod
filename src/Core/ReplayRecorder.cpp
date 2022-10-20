@@ -94,7 +94,7 @@ using UnityEngine::Resources;
 namespace ReplayRecorder {
 
     optional<Replay> replay;
-    std::function<void(Replay const&, MapStatus, bool)> replayCallback;
+    std::function<void(Replay const&, bool)> replayCallback;
 
     MapEnhancer mapEnhancer;
     UserEnhancer userEnhancer;
@@ -208,18 +208,8 @@ namespace ReplayRecorder {
         mapEnhancer.energy = levelCompletionResults->energy;
         mapEnhancer.Enhance(replay.value());
         
-        switch (levelCompletionResults->levelEndStateType)
-        {
-            case LevelCompletionResults::LevelEndStateType::Cleared:
-                replayCallback(*replay, MapStatus::cleared, isOst);
-                break;
-            case LevelCompletionResults::LevelEndStateType::Failed:
-                if (levelCompletionResults->levelEndAction != LevelCompletionResults::LevelEndAction::Restart)
-                {
-                    replay->info.failTime = audioTimeSyncController->songTime;
-                    replayCallback(*replay, MapStatus::failed, isOst);
-                }
-                break;
+        if(levelCompletionResults->levelEndStateType != LevelCompletionResults::LevelEndStateType::Incomplete){
+            replayCallback(*replay, isOst);
         }
     }
 
@@ -245,7 +235,7 @@ namespace ReplayRecorder {
 
                     mapEnhancer.energy = results->energy;
                     mapEnhancer.Enhance(replay.value());
-                    replayCallback(*replay, MapStatus::cleared, isOst);
+                    replayCallback(*replay, isOst);
                     break;
             }
         }
@@ -529,7 +519,7 @@ namespace ReplayRecorder {
         }
     }
 
-    void StartRecording(function<void(Replay const &, MapStatus, bool)> const &callback) {
+    void StartRecording(function<void(Replay const &, bool)> const &callback) {
         LoggerContextObject logger = getLogger().WithContext("load");
 
         getLogger().info("Installing ReplayRecorder hooks...");

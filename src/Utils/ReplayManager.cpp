@@ -27,8 +27,8 @@ void ReplayManager::ProcessReplay(Replay const &replay, bool isOst, function<voi
 
     getLogger().info("%s",("Replay saved " + filename).c_str());
     
-    if (replay.info.failTime > 0.001 || replay.info.speed > 0.001) {
-        finished(ReplayUploadStatus::finished, "<color=#008000ff>Failed attempt was saved!</color>", 0, -1);
+    if (replay.info.speed > 0.001) {
+        finished(ReplayUploadStatus::finished, "<color=#008000ff>Practice attempt was saved!</color>", 0, -1);
         return; 
     }
     if(isOst)
